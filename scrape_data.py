@@ -48,3 +48,34 @@ def get_article_list():
                data_to_save=article_list)
 
     return article_list
+
+
+def filter_articles():
+    """Filter out articles that either have non-text content or are
+    in directories not allowed for scraping by robots.txt"""
+    article_list = get_article_list()
+
+    filters = [
+        '/video/',
+        '/ng-interactive/',
+        '/audio/',
+        '/cartoon/',
+        '/gallery/',
+        '/blog/'
+    ]
+
+    filtered_article_list = None
+
+    for filter_string in filters:
+        filtered_article_list = [article for article in article_list if filter_string not in article['href']]
+
+    if filtered_article_list is None:
+        print("oops, something went wrong here!")
+        print("filtered_article_list is None")
+        return None
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=filtered_article_list)
+
+    return None
