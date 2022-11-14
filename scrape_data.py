@@ -79,3 +79,25 @@ def filter_articles():
                data_to_save=filtered_article_list)
 
     return None
+
+
+def scrape_html_of_articles():
+    """Extract the html of each article page in the filtered list of articles,
+    save these as soup objects for further refinement"""
+
+    filtered_article_list = load_from_db(db_key_string='filtered_articles')
+
+    for article in filtered_article_list:
+        time.sleep(0.5)
+        page = requests.get(article['href'])
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # Storing soup as a string to avoid recursionerror when saving to shelf db
+        article['soup'] = f"{soup}"
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=filtered_article_list)
+
+    return None
+
