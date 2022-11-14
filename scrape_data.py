@@ -101,3 +101,33 @@ def scrape_html_of_articles():
 
     return None
 
+
+def process_article_raw_html() -> None:
+    """Process the raw html to extract relevant information to use in textual analysis"""
+
+    filtered_article_list = load_from_db(db_key_string='filtered_articles')
+
+    for count, article in enumerate(filtered_article_list):
+        soup = BeautifulSoup(article['soup'], 'html.parser')
+
+        try:
+            standfirst = soup.find("div", {"data-gu-name": "standfirst"}).text
+            article['standfirst'] = standfirst
+        except Exception as e:
+            print(e)
+            print(article['href'])
+            print(count)
+
+        try:
+            maincontent = soup.find("div", {"id": "maincontent"}).text
+            article['maincontent'] = maincontent
+        except Exception as e:
+            print(e)
+            print(article['href'])
+            print(count)
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=filtered_article_list)
+
+    return None
