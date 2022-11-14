@@ -1,7 +1,8 @@
-"""Script to scrape the raw articles as input data"""
+"""Script to scrape the raw articles as input data and do basic pre-processing with BS4"""
 import time
 
 import requests
+import shortuuid
 from bs4 import BeautifulSoup
 
 from data_access import save_to_db, load_from_db, get_db_keys
@@ -133,3 +134,21 @@ def process_article_raw_html() -> None:
                data_to_save=filtered_article_list)
 
     return None
+
+
+def add_uuids_to_articles():
+    """Use shortuuid library to give uuids to each article"""
+
+    filtered_article_list = load_from_db(db_key_string='filtered_articles')
+
+    for article in filtered_article_list:
+        if 'uuid' in article.keys():
+            # Article already has uuid
+            continue
+        article['uuid'] = shortuuid.uuid()
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=filtered_article_list)
+
+
