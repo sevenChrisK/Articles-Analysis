@@ -4,8 +4,10 @@ import time
 import requests
 import shortuuid
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 from data_access import save_to_db, load_from_db, get_db_keys
+from data_access import save_to_db, load_from_db, get_db_keys, report_shelf_contents
 
 
 def get_article_list() -> list[dict]:
@@ -167,3 +169,14 @@ def process_timestamps():
     save_to_db(db_key_string='filtered_articles',
                data_to_save=filtered_article_list)
 
+
+if __name__ == '__main__':
+    get_article_list()
+    filter_articles()
+    scrape_html_of_articles()
+    process_article_raw_html()
+    add_uuids_to_articles()
+    report_shelf_contents()
+
+else:
+    print("Imported scrape_data.py")
