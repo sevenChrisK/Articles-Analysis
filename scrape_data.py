@@ -1,11 +1,13 @@
 """Script to scrape the raw articles as input data"""
 import time
+
 import requests
 from bs4 import BeautifulSoup
+
 from data_access import save_to_db, load_from_db, get_db_keys
 
 
-def get_article_list():
+def get_article_list() -> list[dict]:
     """Check if the list of articles already exists in the datastore shelf, if so then return this.
     If the article list does not exist in the shelf then scrape from web and create the datastore."""
 
@@ -50,7 +52,7 @@ def get_article_list():
     return article_list
 
 
-def filter_articles():
+def filter_articles() -> None:
     """Filter out articles that either have non-text content or are
     in directories not allowed for scraping by robots.txt"""
     article_list = get_article_list()
@@ -81,7 +83,7 @@ def filter_articles():
     return None
 
 
-def scrape_html_of_articles():
+def scrape_html_of_articles() -> None:
     """Extract the html of each article page in the filtered list of articles,
     save these as soup objects for further refinement"""
 
