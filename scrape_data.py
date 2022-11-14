@@ -152,3 +152,18 @@ def add_uuids_to_articles():
                data_to_save=filtered_article_list)
 
 
+def process_timestamps():
+    """Convert raw scraped timestamps into datetime objects"""
+
+    filtered_article_list = load_from_db(db_key_string='filtered_articles')
+
+    for article in filtered_article_list:
+        # Raw time strings example: '2022-10-20T16:35:18+0000'
+        raw_date_string = article['time'].split("T")[0]
+        dt_object = datetime.strptime(raw_date_string, "%Y-%m-%d")
+        article['date'] = dt_object.date()
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=filtered_article_list)
+
