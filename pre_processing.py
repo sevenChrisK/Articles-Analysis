@@ -1,9 +1,13 @@
 """Script file to for initial text analysis pre-processing"""
 from nltk import PunktSentenceTokenizer
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 
+from data_access import load_from_db, save_to_db
+
 sentence_tokenizer = PunktSentenceTokenizer()
+
 
 def train_sentence_tokenizer() -> None:
     """Train sentence tokenizer on all article text"""
@@ -73,6 +77,48 @@ def remove_numeric_tokens():
     for article in article_list:
         for numchar in numchars:
             article['words'] = [word for word in article['words'] if numchar not in word]
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=article_list)
+
+    return None
+
+
+def stem_sentence(input_sentence: str) -> str:
+    """Take a sentence, stem words, and return a sentence"""
+    ps = PorterStemmer()
+
+    word_list = word_tokenize(input_sentence)
+    word_list = [ps.stem(word) for word in word_list]
+    returned_sentence = " ".join(word_list)
+
+    return returned_sentence
+
+
+def stem_article_words() -> None:
+    """Stem words included in article word and sentence lists"""
+    article_list = load_from_db(db_key_string='filtered_articles')
+    ps = PorterStemmer()
+
+    for article in article_list:
+        # Stem word tokens
+        article['words'] = [
+            {
+                'original_word': word,
+                'stemmed_word': ps.stem(word)
+            }
+            for word in article['words']
+        ]
+
+        # Stem sentence tokens
+        article['sentences'] = [
+            {
+                'original_sentence': sentence,
+                'stemmed_sentence': ps.stem(sentence)
+            }
+            for sentence in article['sentences']
+        ]
 
     # Save the updated list for later use
     save_to_db(db_key_string='filtered_articles',
