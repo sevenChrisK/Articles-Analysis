@@ -1,4 +1,6 @@
 """Script file to for initial text analysis pre-processing"""
+
+import nltk
 from nltk import PunktSentenceTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -119,6 +121,30 @@ def stem_article_words() -> None:
             }
             for sentence in article['sentences']
         ]
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=article_list)
+
+    return None
+
+
+def tag_article_words() -> None:
+    """Add part of speech tags to words in article words"""
+    article_list = load_from_db(db_key_string='filtered_articles')
+
+    for article in article_list:
+
+        # nltk part of speech tag requires list of strings as input
+        input_words_list = [word['original_word'] for word in article['words']]
+        pos_tags = nltk.pos_tag(input_words_list)
+
+        for count, value in enumerate(article['words']):
+            value.update(
+                {
+                    'pos_tag': pos_tags[count]
+                }
+            )
 
     # Save the updated list for later use
     save_to_db(db_key_string='filtered_articles',
