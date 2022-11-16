@@ -1,3 +1,4 @@
+"""Script file to for initial text analysis pre-processing"""
 from nltk import PunktSentenceTokenizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -63,4 +64,19 @@ def remove_sentence_stopwords(input_sentence: str) -> str:
     returned_sentence = " ".join(word_list)
 
     return returned_sentence
+
+
+def remove_numeric_tokens():
+    article_list = load_from_db(db_key_string='filtered_articles')
+    numchars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+    for article in article_list:
+        for numchar in numchars:
+            article['words'] = [word for word in article['words'] if numchar not in word]
+
+    # Save the updated list for later use
+    save_to_db(db_key_string='filtered_articles',
+               data_to_save=article_list)
+
+    return None
 
