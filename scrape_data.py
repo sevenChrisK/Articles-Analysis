@@ -6,7 +6,6 @@ import shortuuid
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-from data_access import save_to_db, load_from_db, get_db_keys
 from data_access import save_to_db, load_from_db, get_db_keys, report_shelf_contents
 
 

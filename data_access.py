@@ -33,3 +33,4 @@ def report_shelf_contents() -> None:
         print(f"{key}: ")
         print(f"{len(load_from_db(db_key_string=key))} items stored.")
         print("\n")
+
